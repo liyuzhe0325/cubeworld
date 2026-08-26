@@ -1,5 +1,12 @@
 node_modules/
 nul_check.js
-shot.js
+shot*.js
+ascii_view.py
+colorgrid.py
+ab_*.png
+elim_*.png
+probe_*.png
+sky_*.png
+sweep_*.png
 shot_*.png
 *.log
