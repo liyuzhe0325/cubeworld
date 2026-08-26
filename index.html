@@ -8,12 +8,20 @@
 <script type="importmap">
 {
   "imports": {
-    "three": "./vendor/three/three.module.js",
+    "three": "./vendor/three/three.module.min.js",
     "three/addons/": "./vendor/three/addons/"
   }
 }
 </script>
 <script src="./vendor/gsap/gsap.min.js"></script>
+<script>
+window.__bootT = setTimeout(function () {
+  var el = document.getElementById('load-err');
+  if (el && !window.__booted) {
+    el.textContent = '页面一直没有反应：可能是浏览器版本过旧（需要较新的 Chrome/Safari/Edge），或网络无法加载资源。请把这句话截图发给制作者。';
+  }
+}, 10000);
+</script>
 </head>
 <body>
 
@@ -24,6 +32,7 @@
     <div class="load-sub">给奶奶的生日礼物</div>
     <div class="load-bar"><div id="load-fill"></div></div>
     <div id="load-pct">0%</div>
+    <div id="load-stage">正在准备…</div>
     <div id="load-err"></div>
   </div>
 </div>

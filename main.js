@@ -4,6 +4,8 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
+window.__booted = true;
+
 /* ================= 可调参数 ================= */
 const CFG = {
   glb: './assets/cubeworld_web.glb',
@@ -71,6 +73,10 @@ function showError(msg) {
   const el = $('load-err');
   if (el) el.textContent += msg + '\n';
 }
+function setStage(txt) {
+  const el = $('load-stage');
+  if (el) el.textContent = txt;
+}
 window.addEventListener('error', e => showError('出错了: ' + e.message));
 window.addEventListener('unhandledrejection', e => showError('出错了: ' + (e.reason && e.reason.message || e.reason)));
 
@@ -106,6 +112,7 @@ function buildLights(data) {
       sun.shadow.mapSize.set(2048, 2048);
       const s = 9;
       Object.assign(sun.shadow.camera, { left: -s, right: s, top: s, bottom: -s, near: 5, far: 60 });
+      sun.shadow.camera.updateProjectionMatrix();
       sun.shadow.bias = -0.0004;
       sun.shadow.normalBias = 0.02;
       scene.add(sun, sun.target);
@@ -162,6 +169,7 @@ async function loadJSON(url) {
 }
 
 async function init() {
+  setStage('正在初始化渲染器…');
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -179,6 +187,7 @@ async function init() {
 
   clock = new THREE.Clock();
 
+  setStage('正在读取配置…');
   [camMeta] = await Promise.all([loadJSON(CFG.camJson)]);
   const lightsData = await loadJSON(CFG.lightJson);
   lensSamples = camMeta.lens_samples;
@@ -188,13 +197,19 @@ async function init() {
   const draco = new DRACOLoader(manager).setDecoderPath('./vendor/three/addons/libs/draco/gltf/');
   const loader = new GLTFLoader(manager).setDRACOLoader(draco);
 
+  setStage('正在下载模型…');
   const gltf = await loader.loadAsync(CFG.glb, e => {
+    const mb = (e.loaded / 1048576).toFixed(1);
     if (e.total) {
       const pct = Math.round(e.loaded / e.total * 100);
       $('load-fill').style.width = pct + '%';
       $('load-pct').textContent = pct + '%';
+      setStage(`正在下载模型… ${mb} MB`);
+    } else {
+      setStage(`正在下载模型… 已下载 ${mb} MB`);
     }
   });
+  setStage('正在解析模型（Draco 解码）…');
   $('load-fill').style.width = '100%';
   $('load-pct').textContent = '100%';
   onLoaded(gltf, lightsData);

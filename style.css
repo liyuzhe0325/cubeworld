@@ -42,6 +42,7 @@ html, body {
   transition: width .25s ease;
 }
 #load-pct { margin-top: 14px; font-size: 13px; letter-spacing: 2px; opacity: .8; }
+#load-stage { margin-top: 8px; font-size: 12px; letter-spacing: 1px; opacity: .65; }
 #load-err {
   margin-top: 18px; font-size: 12px; line-height: 1.7;
   color: #ffe0d0; word-break: break-all; white-space: pre-wrap;
