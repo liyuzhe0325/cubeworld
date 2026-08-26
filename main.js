@@ -11,13 +11,14 @@ const CFG = {
   glb: './assets/cubeworld_web.glb',
   camJson: './assets/web_camera.json',
   lightJson: './assets/web_lights.json',
-  exposure: 1.12,
+  exposure: 1.0,
   sunIntensity: 2.6,        // DawnSun 平行光
   seaPathIntensity: 0.5,    // DawnSeaPath 海面反光平行光
-  hemiIntensity: 0.55,      // FillSky 天光
-  ambient: 0.22,
+  hemiIntensity: 0.45,      // FillSky 天光
+  ambient: 0.15,
   envIntensity: 0.38,
-  pointScale: 0.45,         // 点光能量换算
+  pointScale: 0.1,          // 点光能量换算（Blender瓦特→坎德拉≈1/4π）
+  candleBase: 2.2,          // 烛光基础强度
   exploreTarget: [0, 0.05, -0.45],
   minDist: 0.5,
   maxDist: 20,
@@ -27,31 +28,31 @@ const CFG = {
 const HOTSPOTS = [
   { match: n => n === 'Note' || n === 'NoteText_Quad', dotAt: 'Note',
     title: '信笺', dist: 0.30,
-    text: '「愿被世界选中的间隙里，\n你仍给自己留一扇不关的窗。」\n\n生日快乐，奶奶！' },
+       text: '「愿被世界选中的间隙里，\n你仍给自己留一扇不关的窗。」\n\n十八岁生日快乐！' },
   { match: n => n === 'Sketch_Sheet' || n === 'Sketch_DogInk', dotAt: 'Sketch_Sheet',
     title: '一幅小画', dist: 0.28,
-    text: '纸上画着小狗、太阳和一颗心。\n愿您每天都有小小的、孩子气的快乐。' },
+       text: '纸上画着小狗、太阳和一颗心。\n愿你每天都有小小的、孩子气的快乐。' },
   { match: n => n === 'DriftBottle' || n.startsWith('BottleRope') || n === 'Cork' || n === 'InnerWater', dotAt: 'DriftBottle',
     title: '漂流瓶', dist: 0.38,
     text: '瓶子从很远的海漂来，\n装着一整艘帆船和一句祝福。' },
   { match: n => n.startsWith('Ship_'), dotAt: 'Ship_Hull',
     title: '瓶中帆船「乘风号」', dist: 0.34,
-    text: '愿奶奶的日子，一帆风顺。' },
+       text: '愿你的日子，一帆风顺。' },
   { match: n => n === 'PorcelainRobot' || n.startsWith('Robot_'), dotAt: 'PorcelainRobot',
     title: '守夜小机器人', dist: 0.38,
-    text: '它是这方世界的守夜人，\n替我们守着这片小小的海。' },
+       text: '它是这方世界的守夜人，\n替你守着这片小小的海。' },
   { match: n => n.startsWith('Candle'), dotAt: 'Candle_Dish',
     title: '不灭的蜡烛', dist: 0.32,
-    text: '这根蜡烛永远不会熄灭，\n就像我们对您的爱。' },
+       text: '这根蜡烛永远不会熄灭，\n愿你的愿望一个不落，全都实现。' },
   { match: n => n.startsWith('Book_'), dotAt: 'Book_Back',
     title: '红皮书', dist: 0.34,
-    text: '书里夹着一年四季，\n也夹着我们想对您说的话。' },
+       text: '书里夹着一年四季，\n也夹着想对你说的话。' },
   { match: n => n.startsWith('SacredOak'), dotAt: 'SacredOak_MainTwistingTrunk', dotUp: 1.6,
     title: '悬崖上的神橡', dist: 2.4,
-    text: '把根扎进石头缝里，向着光生长——\n像您一样，坚韧又温柔。' },
+       text: '把根扎进石头缝里，向着光生长——\n愿十八岁的你，也像它一样。' },
   { match: n => n.startsWith('LH_'), dotAt: 'LH_Polish_LampCore',
     title: '远处的灯塔', dist: 4.0,
-    text: '不管多晚，总有一盏灯为您亮着。' },
+       text: '不管多晚，总有一盏灯为你亮着。' },
 ];
 
 /* ================= 不投影的物件 ================= */
@@ -86,12 +87,12 @@ function makeSkyTexture() {
   c.width = 32; c.height = 1024;
   const g = c.getContext('2d');
   const grad = g.createLinearGradient(0, 0, 0, 1024);
-  grad.addColorStop(0.00, '#4a6b9d');
-  grad.addColorStop(0.35, '#8d7fa8');
-  grad.addColorStop(0.52, '#e0a184');
-  grad.addColorStop(0.62, '#f5c9a0');
-  grad.addColorStop(0.72, '#e8a97e');
-  grad.addColorStop(1.00, '#33506e');
+  grad.addColorStop(0.00, '#2c3f5f');
+  grad.addColorStop(0.35, '#584f70');
+  grad.addColorStop(0.52, '#a9715a');
+  grad.addColorStop(0.62, '#c78f66');
+  grad.addColorStop(0.72, '#a57153');
+  grad.addColorStop(1.00, '#1f3a54');
   g.fillStyle = grad;
   g.fillRect(0, 0, 32, 1024);
   const tex = new THREE.CanvasTexture(c);
@@ -109,7 +110,7 @@ function buildLights(data) {
       dir.set(L.direction[0], L.direction[1], L.direction[2]);
       sun.position.copy(dir.clone().multiplyScalar(-30));
       sun.castShadow = true;
-      sun.shadow.mapSize.set(2048, 2048);
+      sun.shadow.mapSize.set(1024, 1024);
       const s = 9;
       Object.assign(sun.shadow.camera, { left: -s, right: s, top: s, bottom: -s, near: 5, far: 60 });
       sun.shadow.camera.updateProjectionMatrix();
@@ -130,7 +131,7 @@ function buildLights(data) {
         d.position.copy(dir.clone().multiplyScalar(-25));
         scene.add(d, d.target);
       } else {
-        const p = new THREE.PointLight(color, L.energy * CFG.pointScale * 0.8, 0, 2);
+        const p = new THREE.PointLight(color, L.energy * CFG.pointScale * 0.25, 0, 2);
         p.position.set(L.location[0], L.location[1], L.location[2]);
         scene.add(p);
       }
@@ -170,17 +171,16 @@ async function loadJSON(url) {
 
 async function init() {
   setStage('正在初始化渲染器…');
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: window.devicePixelRatio < 2 });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = CFG.exposure;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
 
   scene = new THREE.Scene();
   scene.background = makeSkyTexture();
-  scene.fog = new THREE.Fog(0xe8b48c, 25, 90);
 
   camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.02, 300);
   camera.position.set(0, 0.5, 6);
@@ -217,6 +217,7 @@ async function init() {
 
 function onLoaded(gltf, lightsData) {
   scene.add(gltf.scene);
+  window.__scene = scene; window.__renderer = renderer; window.__camera = camera; window.__CFG = CFG; // 调试钩子
 
   // 环境反射（瓷器/玻璃质感）
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -225,11 +226,31 @@ function onLoaded(gltf, lightsData) {
 
   buildLights(lightsData);
 
-  // 阴影规则 + 收集动效对象
+  // 剥离 GLB 内嵌灯光（能量单位与three不符，会炸白场景；灯光由 web_lights.json 重建）
+  const embeddedLights = [];
+  gltf.scene.traverse(o => { if (o.isLight) embeddedLights.push(o); });
+  embeddedLights.forEach(l => l.parent && l.parent.remove(l));
+
+  // 阴影规则 + 收集动效对象 + 透射材质降级
   gltf.scene.traverse(o => {
     if (o.isMesh) {
       o.castShadow = !NO_CAST.has(o.name) && !o.name.startsWith('Cloud') && !o.name.startsWith('Gull');
       o.receiveShadow = true;
+      const m = o.material;
+      if (m && m.emissiveIntensity > 6 && o.name !== 'Candle_Flame') {
+        m.emissiveIntensity = o.name === 'Sea_Surface' ? 0.5 : 6; // 导出时发光强度被放大，压回合理范围
+      }
+      if (m && m.transmission > 0) {
+        // transmission 会每帧多渲染一遍场景，手机上极卡且发白；换成普通透明
+        m.transmission = 0;
+        m.transparent = true;
+        m.opacity = o.name === 'InnerWater' ? 0.6 : (o.name === 'Glass_Shell' ? 0.16 : 0.3);
+        m.roughness = 0.06;
+        m.metalness = 0;
+        m.envMapIntensity = 1.5;
+        m.depthWrite = false;
+        m.needsUpdate = true;
+      }
       if (o.name === 'Candle_Flame') {
         o.material = o.material.clone();
         flame = o;
@@ -238,6 +259,10 @@ function onLoaded(gltf, lightsData) {
     if (o.name.startsWith('Cloud')) clouds.push(o);
     if (o.name.startsWith('Gull')) gulls.push(o);
   });
+
+  // 场景静态，阴影只烘焙一次（性能关键）
+  renderer.shadowMap.autoUpdate = false;
+  renderer.shadowMap.needsUpdate = true;
 
   // 相机与动画
   giftCam = gltf.scene.getObjectByName('GiftCam');
@@ -427,7 +452,7 @@ function animate() {
   if (flame) {
     const f = 0.82 + 0.18 * (Math.sin(t * 11) * 0.5 + Math.sin(t * 23 + 1.7) * 0.35 + Math.sin(t * 41 + 0.5) * 0.15);
     flame.material.emissiveIntensity = 2.4 * f;
-    if (candleLight) candleLight.intensity = 0.7 * CFG.pointScale * (0.8 + 0.4 * f);
+    if (candleLight) candleLight.intensity = CFG.candleBase * (0.8 + 0.4 * f);
   }
   // 云漂移
   for (const c of clouds) {

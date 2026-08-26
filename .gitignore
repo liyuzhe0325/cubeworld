@@ -1,3 +1,5 @@
 node_modules/
 nul_check.js
+shot.js
+shot_*.png
 *.log
