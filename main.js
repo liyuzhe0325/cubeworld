@@ -55,6 +55,33 @@ const HOTSPOTS = [
        text: '不管多晚，总有一盏灯为你亮着。' },
 ];
 
+/* ================= 导出丢失颜色的材质补色 ================= */
+/* 这些材质在Blender里用程序化节点上色，导出glTF后变成纯白，这里按渲染效果补回 */
+const MATERIAL_COLORS = {
+  VisLand: '#7a8548',              // 草地/崖顶
+  CliffRock: '#8a7a68',
+  Candle_Wax: '#f2e6cc',
+  VisSea: '#7a94b8',
+  ShipWoodDark: '#5a4028',
+  ShipRail: '#6b4e32',
+  ShipWood: '#8a6a48',
+  ShipDeck: '#a8855c',
+  SailJib: '#efe6d2',
+  SailMain: '#f4ecd8',
+  SeaFloorMat: '#9a8a6a',
+  Vessel_Frost: '#e8ecf0',
+  Vessel_PlinthMat: '#3a3f4a',
+  SacredOak_WarmIvoryWood: '#d8c9b4',
+  SacredOak_BarkPlanes_Light: '#cbb79e',
+  SacredOak_SoftWhiteCanopy: '#f2e8da',
+  SacredOak_CanopyWarmShade: '#dcc4a8',
+  SacredOak_Rework_BarkShadow: '#6e5847',
+  SacredOak_Rework_WarmLeafTips: '#e8a86b',
+  SacredOak_SoilDark: '#4a382a',
+  SacredOak_WhiteStones: '#d8d4cc',
+  Robot_Porcelain: '#f0ece4',
+};
+
 /* ================= 不投影的物件 ================= */
 const NO_CAST = new Set(['Vessel_Frame', 'CubeFrame', 'Glass_Shell', 'Sea_Surface', 'Sea_Water',
   'SeaFloor', 'NoteText_Quad', 'LH_Spray_Frozen', 'Picnic_Clearing', 'DriftBottle', 'InnerWater', 'Cork']);
@@ -237,6 +264,9 @@ function onLoaded(gltf, lightsData) {
       o.castShadow = !NO_CAST.has(o.name) && !o.name.startsWith('Cloud') && !o.name.startsWith('Gull');
       o.receiveShadow = true;
       const m = o.material;
+      if (m && MATERIAL_COLORS[m.name] && !m.map) {
+        m.color.set(MATERIAL_COLORS[m.name]);
+      }
       if (m && m.emissiveIntensity > 6 && o.name !== 'Candle_Flame') {
         m.emissiveIntensity = o.name === 'Sea_Surface' ? 0.5 : 6; // 导出时发光强度被放大，压回合理范围
       }
