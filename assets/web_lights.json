@@ -1,0 +1,197 @@
+{
+ "lights": [
+  {
+   "name": "BottleSpec",
+   "type": "AREA",
+   "color": [
+    1.0,
+    0.96,
+    0.88
+   ],
+   "energy": 0.8,
+   "location": [
+    0.2425,
+    -0.5825,
+    -0.82939
+   ],
+   "direction": [
+    -0.76285,
+    0.2136,
+    -0.61028
+   ],
+   "shadow": true,
+   "size": 0.35
+  },
+  {
+   "name": "CandleLight",
+   "type": "POINT",
+   "color": [
+    1.0,
+    0.48,
+    0.16
+   ],
+   "energy": 0.7,
+   "location": [
+    0.2175,
+    -0.37,
+    -0.96997
+   ],
+   "direction": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "shadow": true
+  },
+  {
+   "name": "DawnSeaPath",
+   "type": "AREA",
+   "color": [
+    1.0,
+    0.4,
+    0.1
+   ],
+   "energy": 5.0,
+   "location": [
+    4.0,
+    -10.5,
+    -3.9
+   ],
+   "direction": [
+    -0.24542,
+    -0.03912,
+    -0.96863
+   ],
+   "shadow": true,
+   "size": 12.0,
+   "blocker_count": 566,
+   "frame_blocked": true
+  },
+  {
+   "name": "DawnSun",
+   "type": "SUN",
+   "color": [
+    1.0,
+    0.42,
+    0.12
+   ],
+   "energy": 6.5,
+   "location": [
+    18.0,
+    -20.0,
+    1.2
+   ],
+   "direction": [
+    -0.67616,
+    0.73496,
+    -0.05145
+   ],
+   "shadow": true,
+   "blocker_count": 566,
+   "frame_blocked": true
+  },
+  {
+   "name": "FillSky",
+   "type": "AREA",
+   "color": [
+    0.35,
+    0.48,
+    0.85
+   ],
+   "energy": 1.3,
+   "location": [
+    -5.0,
+    8.0,
+    4.5
+   ],
+   "direction": [
+    -1.14907,
+    -1.99024,
+    -1.92836
+   ],
+   "shadow": true,
+   "size": 22.0
+  },
+  {
+   "name": "LH_Polish_Light",
+   "type": "POINT",
+   "color": [
+    1.0,
+    0.72,
+    0.38
+   ],
+   "energy": 1.2,
+   "location": [
+    -6.05,
+    -9.55,
+    1.26
+   ],
+   "direction": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "shadow": true
+  },
+  {
+   "name": "PicnicGlow",
+   "type": "AREA",
+   "color": [
+    1.0,
+    0.62,
+    0.3
+   ],
+   "energy": 3.0,
+   "location": [
+    0.1,
+    -0.32,
+    -0.62
+   ],
+   "direction": [
+    -0.14038,
+    0.3429,
+    -0.92882
+   ],
+   "shadow": true,
+   "size": 0.6
+  },
+  {
+   "name": "SunPoint",
+   "type": "POINT",
+   "color": [
+    1.0,
+    0.38,
+    0.1
+   ],
+   "energy": 8.0,
+   "location": [
+    14.0,
+    -16.5,
+    -2.2
+   ],
+   "direction": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "shadow": true,
+   "blocker_count": 566,
+   "frame_blocked": true
+  }
+ ],
+ "world": {
+  "color": [
+   0.8,
+   0.8,
+   0.8,
+   1.0
+  ],
+  "strength": 0.28
+ },
+ "notes": {
+  "shadow_rule": "Vessel_Frame/CubeFrame/Glass_Shell 不对场景投阴影（网页端：这三件 castShadow=false）",
+  "area_lights": "AREA灯不进glTF：BottleSpec(0.8)/DawnSeaPath(5.0)/FillSky(1.3)/PicnicGlow(3.0)，网页端重建",
+  "glass": "BottleGlass=transmission+volume(绿边)；Vessel_Pane=transmission；SSS材质用emissive近似",
+  "girl_giftbox_assets": "Girl_*与GiftBox_*在blend中隐藏保留，未导出"
+ }
+}

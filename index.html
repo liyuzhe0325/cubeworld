@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>一方世界 · 生日快乐</title>
+<link rel="stylesheet" href="./style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./vendor/three/addons/"
+  }
+}
+</script>
+<script src="./vendor/gsap/gsap.min.js"></script>
+</head>
+<body>
+
+<!-- 加载屏 -->
+<div id="loading">
+  <div class="load-inner">
+    <div class="load-title">一方世界</div>
+    <div class="load-sub">给奶奶的生日礼物</div>
+    <div class="load-bar"><div id="load-fill"></div></div>
+    <div id="load-pct">0%</div>
+    <div id="load-err"></div>
+  </div>
+</div>
+
+<!-- CG 跳过 -->
+<button id="skip" class="hidden">跳过 ›</button>
+
+<!-- 探索提示 -->
+<div id="hint" class="hidden">拖动旋转 · 双指缩放 · 点击发光的小物件</div>
+
+<!-- 热点卡片 -->
+<div id="caption" class="hidden">
+  <div id="cap-title"></div>
+  <div id="cap-text"></div>
+  <button id="cap-close">×</button>
+</div>
+
+<!-- 转场白场 -->
+<div id="fade"></div>
+
+<canvas id="view"></canvas>
+
+<script type="module" src="./main.js"></script>
+</body>
+</html>
